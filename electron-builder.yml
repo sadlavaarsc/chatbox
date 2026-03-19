@@ -1,4 +1,4 @@
-productName: Chatbox
+productName: ChatBox
 appId: xyz.chatboxapp.app
 asar: true
 asarUnpack:
