@@ -224,6 +224,7 @@ const ExtensionSettingsSchema = z.object({
           .nullable()
           .optional(),
       }),
+      embedBatchSize: z.number().min(1).max(200).default(50).optional(),
     })
     .optional(),
   // Document parser configuration for global default

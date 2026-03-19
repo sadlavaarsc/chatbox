@@ -9,6 +9,7 @@ import { getLogger } from '../util'
 import { checkProcessingTimeouts, getDatabase, getVectorStore } from './db'
 import { getEmbeddingProvider, getRerankProvider } from './model-providers'
 import { getEffectiveParserConfig, parseFileWithRouter, type ParserFileMeta } from './parsers'
+import { getSettings } from '../store-node'
 
 const log = getLogger('knowledge-base:file-loaders')
 
@@ -150,7 +151,11 @@ export async function processFileWithMastra(
     const embeddingInstance = await getEmbeddingProvider(kbId)
     const vectorStore = getVectorStore()
     const indexName = `kb_${kbId}`
-    const BATCH_SIZE = 50 // Process chunks in batches of 50
+    
+    // Get embed batch size from settings, default to 50 if not configured
+    const settings = getSettings();
+    const configuredBatchSize = settings.extension?.knowledgeBase?.embedBatchSize;
+    const BATCH_SIZE = configuredBatchSize ?? 50; // Process chunks in configurable batches, default to 50
 
     // Ensure vector index exists by getting dimension from first remaining chunk
     const firstEmbedding = await embedMany({

@@ -1,4 +1,4 @@
-import { Button, Flex, PasswordInput, Stack, Text, Title } from '@mantine/core'
+import { Button, Flex, NumberInput, PasswordInput, Stack, Text, Title } from '@mantine/core'
 import type { DocumentParserType } from '@shared/types/settings'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,6 +39,7 @@ export function DocumentParserSettings({ showTitle = true }: DocumentParserSetti
 
   const documentParser = extension?.documentParser
   const mineruToken = documentParser?.mineru?.apiToken || ''
+  const embedBatchSize = extension?.knowledgeBase?.embedBatchSize ?? 50
 
   const [testingConnection, setTestingConnection] = useState(false)
   const [connectionResult, setConnectionResult] = useState<boolean | undefined>()
@@ -104,6 +105,22 @@ export function DocumentParserSettings({ showTitle = true }: DocumentParserSetti
     }
   }, [mineruToken])
 
+  const handleEmbedBatchSizeChange = useCallback(
+    (value: number | '') => {
+      const batchSize = value === '' ? 50 : value;
+      setSettings({
+        extension: {
+          ...extension,
+          knowledgeBase: {
+            ...(extension?.knowledgeBase || {}),
+            embedBatchSize: batchSize,
+          },
+        },
+      });
+    },
+    [setSettings, extension]
+  )
+
   return (
     <Stack p="md" gap="xxl">
       {showTitle && <Title order={5}>{t('Document Parser')}</Title>}
@@ -168,6 +185,21 @@ export function DocumentParserSettings({ showTitle = true }: DocumentParserSetti
           </Button>
         </Stack>
       )}
+
+      <Stack gap="xs">
+        <Text fw="600">{t('Embed Batch Size')}</Text>
+        <NumberInput
+          maw={320}
+          min={1}
+          max={200}
+          value={embedBatchSize}
+          onChange={handleEmbedBatchSizeChange}
+          placeholder={t('Enter batch size (1-200)')}
+        />
+        <Text size="xs" c="chatbox-gray">
+          {t('Batch size for embedding processing, default is 50')}
+        </Text>
+      </Stack>
     </Stack>
   )
 }
