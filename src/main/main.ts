@@ -297,13 +297,23 @@ async function createWindow() {
   })
 
   // 窗口关闭时保存窗口大小与位置
-  mainWindow.on('close', () => {
-    if (mainWindow) {
-      windowState.saveState(mainWindow)
+  // 在 macOS 上，拦截关闭事件并隐藏窗口，以便 dock 点击可以恢复窗口
+  mainWindow.on('close', (event) => {
+    if (process.platform === 'darwin' && !app.isQuitting) {
+      event.preventDefault()
+      if (mainWindow) {
+        windowState.saveState(mainWindow)
+        mainWindow.hide()
+      }
+    } else {
+      if (mainWindow) {
+        windowState.saveState(mainWindow)
+      }
     }
   })
 
   mainWindow.on('closed', () => {
+    log.info('[window closed] mainWindow set to null')
     mainWindow = null
   })
 
@@ -458,16 +468,22 @@ if (!gotTheLock) {
       app.on('activate', async () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
+        log.info('[activate] activate event triggered, mainWindow:', mainWindow ? 'exists' : 'null')
         if (mainWindow === null) {
+          log.info('[activate] mainWindow is null, creating new window')
           await createWindow()
         } else {
           // Window exists but may be hidden or minimized
+          log.info('[activate] mainWindow exists, checking visibility')
           if (mainWindow.isMinimized()) {
+            log.info('[activate] mainWindow is minimized, restoring')
             mainWindow.restore()
           }
           if (!mainWindow.isVisible()) {
+            log.info('[activate] mainWindow is not visible, showing')
             mainWindow.show()
           }
+          log.info('[activate] focusing mainWindow')
           mainWindow.focus()
         }
       })
@@ -492,6 +508,7 @@ if (!gotTheLock) {
         destroyTray()
       })
       app.on('before-quit', () => {
+        log.info('[before-quit] setting isQuitting to true')
         destroyTray()
       })
     })
