@@ -1,4 +1,4 @@
-import { Button, Flex, PasswordInput, Stack, Text, Title } from '@mantine/core'
+import { Button, Flex, PasswordInput, Select, Stack, Text, Title, Tooltip } from '@mantine/core'
 import { createFileRoute } from '@tanstack/react-router'
 import { ofetch } from 'ofetch'
 import { useState } from 'react'
@@ -155,8 +155,8 @@ export function RouteComponent() {
               <Select
                 comboboxProps={{ withinPortal: true, withArrow: true }}
                 data={[
-                  { value: 'basic', label: 'Basic' },
-                  { value: 'advanced', label: 'Advanced' },
+                  { value: 'basic', label: t('Basic') },
+                  { value: 'advanced', label: t('Advanced') },
                 ]}
                 value={extension.webSearch.tavilySearchDepth || 'basic'}
                 onChange={(e) =>
@@ -225,11 +225,11 @@ export function RouteComponent() {
               <Select
                 comboboxProps={{ withinPortal: true, withArrow: true }}
                 data={[
-                  { value: 'none', label: 'None' },
-                  { value: 'day', label: 'Day' },
-                  { value: 'week', label: 'Week' },
-                  { value: 'month', label: 'Month' },
-                  { value: 'year', label: 'Year' },
+                  { value: 'none', label: t('None') },
+                  { value: 'day', label: t('Day') },
+                  { value: 'week', label: t('Week') },
+                  { value: 'month', label: t('Month') },
+                  { value: 'year', label: t('Year') },
                 ]}
                 value={extension.webSearch.tavilyTimeRange || 'none'}
                 onChange={(e) =>
@@ -259,9 +259,9 @@ export function RouteComponent() {
               <Select
                 comboboxProps={{ withinPortal: true, withArrow: true }}
                 data={[
-                  { value: 'none', label: 'None' },
-                  { value: 'text', label: 'Text' },
-                  { value: 'markdown', label: 'Markdown' },
+                  { value: 'none', label: t('None') },
+                  { value: 'text', label: t('Text') },
+                  { value: 'markdown', label: t('Markdown') },
                 ]}
                 value={extension.webSearch.tavilyIncludeRawContent || 'none'}
                 onChange={(e) =>
